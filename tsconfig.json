@@ -1,13 +1,16 @@
 
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist",
+    "rootDir": "src",
+    "outDir": "lib",
+    "declaration": true,
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]

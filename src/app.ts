@@ -9,11 +9,12 @@ type Listener = (event: Event) => void;
 let emitter = new EventEmitter()
 let store = new Dequeue()
 
-class App {
+export default class App {
   public server;
   public ws;
+  public listener: any = null;
 
-  constructor() {
+  constructor(opts: any = {}) {
     this.server = express();
     this.ws = require('express-ws')(this.server);
     this.middlewares();
@@ -21,7 +22,7 @@ class App {
     const routes: any = Router();
 
     routes.get('/', (req: any, res: any) => {
-      const js = {
+      const js = opts.nip11 ?? {
         "name": "nostrmini",
         "description": "miniature nostr server",
         "supported_nips": [1, 2, 11],
@@ -69,9 +70,16 @@ class App {
   middlewares() {
     this.server.use(express.json());
   }
-}
 
-export default new App().server;
+  listen(port?: number) {
+    this.listener = this.server.listen(port)
+    return this.listener
+  }
+
+  close() {
+    return this.listener.close()
+  }
+}
 
 function handleEvent(ws: WebSocket, event: Event) {
   ws.send(JSON.stringify(['OK', event.id, true, '']));
