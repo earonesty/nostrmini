@@ -13,3 +13,8 @@
 .vscode
 .yarn
 node_modules
+.editorconfig
+.yarnrc.yml
+.gitattributes
+/lib/
+yarn-error.log
