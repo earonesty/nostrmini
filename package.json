@@ -1,6 +1,6 @@
 {
   "name": "nostrmini",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "Erik Aronesty <erik@q32.com>",
@@ -35,7 +35,6 @@
   },
   "type": "module",
   "bin": "lib/server.js",
-  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "*.md"
