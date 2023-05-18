@@ -1,3 +1,3 @@
-import App from './app';
+import NostrMini from "./app";
 
-new App().listen(3333);
+new NostrMini().listen(3333);
