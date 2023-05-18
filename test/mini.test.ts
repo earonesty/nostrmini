@@ -1,4 +1,7 @@
+import "websocket-polyfill";
+
 import NostrMini from "../src";
+
 import {
   Relay,
   relayInit,
@@ -6,10 +9,6 @@ import {
   getPublicKey,
   finishEvent,
 } from "nostr-tools";
-
-if (typeof global !== "undefined") {
-  (global as any).WebSocket = require("ws");
-}
 
 let nm!: NostrMini;
 let relay!: Relay;

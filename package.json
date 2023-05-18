@@ -22,6 +22,7 @@
   "scripts": {
     "build": "tsc --project ./",
     "test": "jest test",
+    "format": "prettier -w src/ test/",
     "start:dev": "nodemon src/server.ts",
     "start:prod": "node lib/server.js"
   },
