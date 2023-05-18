@@ -15,13 +15,24 @@ yarn start:dev
 
 Or use as a lib
 
-```
+Add to project:
+
+```bash
 yarn add nostrmini
 
 ```
 
-```
+Use in tests
+```ts
 import NostrMini from 'nostrmini'
 const srv = new NostrMini()
-srv.listen(3333)
+srv.listen(0)
+const port = srv.address().port
+const url = `ws://127.0.0.1:${port}`
+
+afterAll(()=>{
+  srv.close()
+})
+
 ```
+
