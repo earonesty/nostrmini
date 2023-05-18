@@ -1,14 +1,8 @@
 {
   "name": "nostrmini",
   "version": "1.0.4",
-  "main": "lib/index.cjs.js",
-  "module": "lib/index.mjs",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "exports": {
-    "import": "lib/index.mjs",
-    "require": "lib/index.cjs.js",
-    "types": "lib/index.d.ts"
-  },
   "author": "Erik Aronesty <erik@q32.com>",
   "description": "in-memory only nostr relay",
   "keywords": [
