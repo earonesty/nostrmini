@@ -58,7 +58,7 @@ export default class App {
             handleReq(ws, subs, js[1], js[2]);
             return;
           case 'CLOSE':
-            handleClose(ws);
+            handleClose(ws, subs, js[1]);
             return;
         }
       })
@@ -110,7 +110,10 @@ function handleReq(ws: WebSocket, subs: Map<string, Listener>, sub: string, filt
   emitter.on('event', listener);
 }
 
-function handleClose(ws: WebSocket) {
-  ws.close()
+function handleClose(ws: WebSocket, subs: Map<string, Listener>, sub: string) {
+  const listener = subs.get(sub)
+  if (listener) {
+      emitter.off('event', listener);
+  }
 }
 
