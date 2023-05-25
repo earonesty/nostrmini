@@ -92,15 +92,19 @@ function handleEvent(ws: WebSocket, event: Event) {
 
 function handleReq(ws: WebSocket, subs: Map<string, Listener>, sub: string, filter: any) {
   const listener = (event: Event) => {
-    if (matchFilter(filter, event)) {
+    if (event && (!filter || matchFilter(filter, event))) {
       ws.send(JSON.stringify(['EVENT', sub, event]));
     }
   };
 
   for (let i = 0; i < store.length; ++i) {
     const ev: Event = store.get(i)
-    if (matchFilter(filter, ev)) {
-      ws.send(JSON.stringify(['EVENT', sub, ev]));
+    try {
+        if (ev && (!filter || matchFilter(filter, ev))) {
+          ws.send(JSON.stringify(['EVENT', sub, ev]));
+        }
+    } catch (e) {
+        console.log("invalid filter match", e, ev)
     }
   }
 
