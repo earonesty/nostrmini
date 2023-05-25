@@ -102,18 +102,18 @@ function handleReq(
 ) {
   const listener = (event: Event) => {
     if (event && (!filter || matchFilter(filter, event))) {
-      ws.send(JSON.stringify(['EVENT', sub, event]));
+      ws.send(JSON.stringify(["EVENT", sub, event]));
     }
   };
 
   for (let i = 0; i < store.length; ++i) {
-    const ev: Event = store.get(i)
+    const ev: Event = store.get(i);
     try {
-        if (ev && (!filter || matchFilter(filter, ev))) {
-          ws.send(JSON.stringify(['EVENT', sub, ev]));
-        }
+      if (ev && (!filter || matchFilter(filter, ev))) {
+        ws.send(JSON.stringify(["EVENT", sub, ev]));
+      }
     } catch (e) {
-        console.log("invalid filter match", e, ev)
+      console.log("invalid filter match", e, ev);
     }
   }
 
