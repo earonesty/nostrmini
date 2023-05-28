@@ -15,7 +15,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --project ./",
-    "prepublish": "$npm_execpath run build",
+    "prepublish": "yarn run build",
     "test": "jest test",
     "format": "prettier -w src/ test/",
     "start:dev": "nodemon src/server.ts",
