@@ -1,7 +1,7 @@
 import express from "express";
 import { Router } from "express";
 import WebSocket from "ws";
-import { matchFilter, Event } from "nostr-tools";
+import { matchFilter, Event, Filter } from "nostr-tools";
 import { EventEmitter } from "node:events";
 const Dequeue = require("double-ended-queue");
 
@@ -55,7 +55,7 @@ export default class App {
             handleEvent(ws, js[1], maxEvents);
             return;
           case "REQ":
-            handleReq(ws, subs, js[1], js[2]);
+            handleReq(ws, subs, js[1], js.slice(2));
             return;
           case "CLOSE":
             handleClose(ws, subs, js[1]);
@@ -98,17 +98,17 @@ function handleReq(
   ws: WebSocket,
   subs: Map<string, Listener>,
   sub: string,
-  filter: any
+  filters: Filter[]
 ) {
   const listener = (event: Event) => {
-    if (matchFilter(filter, event)) {
+    if (filters.some((f) => matchFilter(f, event))) {
       ws.send(JSON.stringify(["EVENT", sub, event]));
     }
   };
 
   for (let i = 0; i < store.length; ++i) {
     const ev: Event = store.get(i);
-    if (matchFilter(filter, ev)) {
+    if (filters.some((f) => matchFilter(f, ev))) {
       ws.send(JSON.stringify(["EVENT", sub, ev]));
     }
   }

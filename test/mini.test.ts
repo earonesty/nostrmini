@@ -30,15 +30,15 @@ afterAll(async () => {
 function getPubPriv() {
   const sk = generatePrivateKey();
   const pk = getPublicKey(sk);
-  return { pk, sk };
+  return [pk, sk];
 }
 
-function makeEvent(sk: string) {
+function makeEvent(sk: string, opts = { kind: 1, tags: [] as string[][] }) {
   return finishEvent(
     {
-      kind: 1,
+      kind: opts.kind,
       created_at: Math.floor(Date.now() / 1000),
-      tags: [],
+      tags: opts.tags,
       content: "nostr-tools test suite",
     },
     sk
@@ -46,7 +46,7 @@ function makeEvent(sk: string) {
 }
 
 test("can post", () => {
-  const { pk, sk } = getPubPriv();
+  const [pk, sk] = getPubPriv();
   var resolve1: (value: boolean) => void;
 
   let sub = relay.sub([
@@ -73,7 +73,7 @@ test("can post", () => {
 });
 
 test("can sub twice", async () => {
-  const { pk, sk } = getPubPriv();
+  const [pk, sk] = getPubPriv();
   var resolve1: (value: boolean) => void;
   var resolve2: (value: boolean) => void;
 
@@ -112,4 +112,44 @@ test("can sub twice", async () => {
   });
 
   expect(ok1 && ok2).toBeTruthy();
+});
+
+test("can use 2 filters", () => {
+  const [pk, sk] = getPubPriv();
+  const [pk2, sk2] = getPubPriv();
+  var resolve1: (value: boolean) => void;
+  var resolve2: (value: boolean) => void;
+
+  let sub = relay.sub([
+    {
+      kinds: [4],
+      authors: [pk],
+    },
+    {
+      kinds: [4],
+      "#p": [pk],
+    },
+  ]);
+
+  sub.on("event", (event) => {
+    if (event.pubkey == pk) resolve1(true);
+    else resolve2(true);
+  });
+
+  let event = makeEvent(sk, { kind: 4, tags: [] });
+  relay.publish(event);
+
+  event = makeEvent(sk2, { kind: 4, tags: [["p", pk]] });
+  relay.publish(event);
+
+  return expect(
+    Promise.all([
+      new Promise((resolve) => {
+        resolve1 = resolve;
+      }),
+      new Promise((resolve) => {
+        resolve2 = resolve;
+      }),
+    ])
+  ).resolves.toEqual([true, true]);
 });
