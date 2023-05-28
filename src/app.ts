@@ -101,15 +101,19 @@ function handleReq(
   filters: Filter[]
 ) {
   const listener = (event: Event) => {
-    if (filters.some((f) => matchFilter(f, event))) {
+    if (event && filters.some((f) => matchFilter(f, event))) {
       ws.send(JSON.stringify(["EVENT", sub, event]));
     }
   };
 
   for (let i = 0; i < store.length; ++i) {
     const ev: Event = store.get(i);
-    if (filters.some((f) => matchFilter(f, ev))) {
-      ws.send(JSON.stringify(["EVENT", sub, ev]));
+    try {
+      if (ev && filters.some((f) => matchFilter(f, ev))) {
+        ws.send(JSON.stringify(["EVENT", sub, ev]));
+      }
+    } catch (e) {
+      console.log("invalid filter match", e, ev);
     }
   }
 
