@@ -109,11 +109,13 @@ function handleReq(
     }
   };
 
-  for (let i = 0; i < store.length && !limit || (i < limit); ++i) {
+  let cnt = 0
+  for (let i = 0; i < store.length; ++i) {
     const ev: Event = store.get(i);
     try {
       if (ev && filters.some((f) => matchFilter(f, ev))) {
         ws.send(JSON.stringify(["EVENT", sub, ev]));
+        if (limit && ++cnt >= limit) break;
       }
     } catch (e) {
       console.log("invalid filter match", e, ev);
