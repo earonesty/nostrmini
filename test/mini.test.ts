@@ -1,4 +1,5 @@
 import "websocket-polyfill";
+import "isomorphic-unfetch"
 
 import NostrMini from "../src";
 
@@ -78,7 +79,8 @@ test("can fetch", async () => {
   const got = await fetch(url, {
       headers: { Accept: 'application/nostr+json' },
     })
-  expect(got).toEqual({
+  const js = await got.json()
+  expect(js).toEqual({
         name: "nostrmini",
         description: "miniature nostr server",
         supported_nips: [1, 2, 11],
