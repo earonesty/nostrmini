@@ -88,7 +88,7 @@ export default class App {
 function handleEvent(ws: WebSocket, event: Event, maxEvents: number) {
   ws.send(JSON.stringify(["OK", event.id, true, ""]));
   emitter.emit("event", event);
-  store.push(event);
+  store.unshift(event);
   if (store.length > maxEvents) {
     store.shift();
   }
@@ -100,13 +100,16 @@ function handleReq(
   sub: string,
   filters: Filter[]
 ) {
+  // weird ambig filter thing
+  const limit = filters[0] && filters[0].limit
+
   const listener = (event: Event) => {
     if (event && filters.some((f) => matchFilter(f, event))) {
       ws.send(JSON.stringify(["EVENT", sub, event]));
     }
   };
 
-  for (let i = 0; i < store.length; ++i) {
+  for (let i = 0; i < store.length && !limit || (i < limit); ++i) {
     const ev: Event = store.get(i);
     try {
       if (ev && filters.some((f) => matchFilter(f, ev))) {

@@ -12,11 +12,12 @@ import {
 
 let nm!: NostrMini;
 let relay!: Relay;
+let port!: number
 
 beforeAll(async () => {
   nm = new NostrMini();
   nm.listen(0);
-  const port = nm.address().port;
+  port = nm.address().port;
   const url = `ws://127.0.0.1:${port}`;
   relay = relayInit(url);
   relay.connect();
@@ -70,6 +71,21 @@ test("can post", () => {
       }),
     ])
   ).resolves.toEqual([true]);
+});
+
+test("can fetch", async () => {
+  const url = `http://127.0.0.1:${port}`;
+  const got = await fetch(url, {
+      headers: { Accept: 'application/nostr+json' },
+    })
+  expect(got).toEqual({
+        name: "nostrmini",
+        description: "miniature nostr server",
+        supported_nips: [1, 2, 11],
+        software: "nostrmini",
+        version: "0.1",
+    }
+  )
 });
 
 test("can sub twice", async () => {
@@ -153,3 +169,21 @@ test("can use 2 filters", () => {
     ])
   ).resolves.toEqual([true, true]);
 });
+
+
+test("can limit", async () => {
+  const [pk, sk] = getPubPriv();
+
+  await relay.publish(makeEvent(sk));
+  await relay.publish(makeEvent(sk));
+  await relay.publish(makeEvent(sk));
+  await relay.publish(makeEvent(sk));
+  await relay.publish(makeEvent(sk));
+
+  const res = await relay.list([{kinds: [1], limit:2}])
+
+  console.log(res)
+
+  expect(res.length).toEqual(2)
+});
+
