@@ -48,5 +48,8 @@
     "lib",
     "*.md"
   ],
+  "engines": {
+    "node": ">=12"
+  },
   "packageManager": "yarn@1.22.19"
 }
